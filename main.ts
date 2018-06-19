@@ -1,67 +1,29 @@
-import { Observable, fromEvent } from "rxjs";
+import { fromEvent } from "rxjs";
 import { map, filter, onErrorResumeNext, delay } from "rxjs/operators";
 
-let numbers = [1, 5, 10];
+let output = document.getElementById("output");
+let button = document.getElementById("button");
 
-// let source = Observable.create(observer => {
-//     for (let n of numbers) {
-//         observer.next(n);
-//     }
-//     observer.complete();
-// })
+let click = fromEvent(button, "click");
 
-// let source = Observable.create(observer => {
-//     let index = 0;
-//     let produceValue = () => {
-//         observer.next(numbers[index++]);
+function load(url: string) {
+    let xhr = new XMLHttpRequest();
 
-//         if (index < numbers.length) {
-//             setTimeout(produceValue, 2000);
-//         } else {
-//             observer.complete();
-//         }
-//     }
-//     produceValue();
-// }).pipe(
-//     map((n: number) => n * 2),
-//     filter((n: number) => n > 4)
-// );
-let circle = document.getElementById("circle");
+    xhr.addEventListener("load", () => {
+        let movies = JSON.parse(xhr.responseText);
+        movies.forEach(movie => {
+            let div = document.createElement("div");
+            div.innerText = movie.title;
+            output.appendChild(div);
+        });
+    })
 
-let source = fromEvent(document, "mousemove")
-    .pipe(
-        map((e: MouseEvent) => {
-            return { x: e.clientX, y: e.clientY }
-        }),
-        filter(value => value.x < 500),
-        delay(300)
-    )
+    xhr.open("GET", url);
+    xhr.send();
+}
 
-
-// let source = from(numbers);
-
-function onNext(value) {
-    circle.style.left = value.x;
-    circle.style.top = value.y;
-};
-
-source.subscribe(
-    onNext,
-    error => console.log(`error: ${error}`),
+click.subscribe(
+    e => load("movies.json"),
+    e => console.log(`error: ${e}`),
     () => console.log("complete")
 );
-
-// class MyObserver implements Observer<number> {
-//     next(value) {
-//         console.log(`value: ${value}`);
-//     }
-//     error(error) {
-//         console.log(`error: ${error}`);
-//     }
-//     complete() {
-//         console.log("complete");
-//     }
-// }
-
-// source.subscribe(new MyObserver());
-// source.subscribe(new MyObserver());
