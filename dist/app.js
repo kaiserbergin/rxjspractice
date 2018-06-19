@@ -86,6 +86,18 @@
 /************************************************************************/
 /******/ ({
 
+/***/ "./loader.ts":
+/*!*******************!*\
+  !*** ./loader.ts ***!
+  \*******************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+eval("\r\nObject.defineProperty(exports, \"__esModule\", { value: true });\r\nvar rxjs_1 = __webpack_require__(/*! rxjs */ \"./node_modules/rxjs/_esm5/index.js\");\r\nvar operators_1 = __webpack_require__(/*! rxjs/operators */ \"./node_modules/rxjs/_esm5/operators/index.js\");\r\nfunction load(url) {\r\n    return rxjs_1.Observable.create(function (observer) {\r\n        var xhr = new XMLHttpRequest();\r\n        xhr.addEventListener(\"load\", function () {\r\n            if (xhr.status === 200) {\r\n                var data = JSON.parse(xhr.responseText);\r\n                observer.next(data);\r\n                observer.complete;\r\n            }\r\n            else {\r\n                observer.error(xhr.statusText);\r\n            }\r\n        });\r\n        xhr.open(\"GET\", url);\r\n        xhr.send();\r\n    }).pipe(operators_1.retryWhen(retryStrategy({ attempts: 3, delayMs: 1500 })));\r\n}\r\nexports.load = load;\r\nfunction loadWithFetch(url) {\r\n    return rxjs_1.defer(function () {\r\n        return rxjs_1.from(fetch(url).then(function (res) {\r\n            if (res.status === 200) {\r\n                return res.json();\r\n            }\r\n            else {\r\n                return Promise.reject(res);\r\n            }\r\n        }));\r\n    }).pipe(operators_1.retryWhen(retryStrategy()));\r\n}\r\nexports.loadWithFetch = loadWithFetch;\r\nfunction retryStrategy(_a) {\r\n    var _b = _a === void 0 ? {} : _a, _c = _b.attempts, attempts = _c === void 0 ? 4 : _c, _d = _b.delayMs, delayMs = _d === void 0 ? 200 : _d;\r\n    return function (errors) {\r\n        return errors.pipe(operators_1.scan(function (acc, value) {\r\n            acc += 1;\r\n            if (acc < attempts) {\r\n                return acc;\r\n            }\r\n            else {\r\n                throw new Error(value.toString());\r\n            }\r\n        }, 0), operators_1.delay(delayMs));\r\n    };\r\n}\r\n\n\n//# sourceURL=webpack:///./loader.ts?");
+
+/***/ }),
+
 /***/ "./main.ts":
 /*!*****************!*\
   !*** ./main.ts ***!
@@ -94,7 +106,7 @@
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-eval("\r\nObject.defineProperty(exports, \"__esModule\", { value: true });\r\nvar rxjs_1 = __webpack_require__(/*! rxjs */ \"./node_modules/rxjs/_esm5/index.js\");\r\nvar operators_1 = __webpack_require__(/*! rxjs/operators */ \"./node_modules/rxjs/_esm5/operators/index.js\");\r\nvar source = rxjs_1.merge(rxjs_1.of(1), rxjs_1.from([2, 3, 4]), rxjs_1.throwError(new Error(\"Stop\")), rxjs_1.of(5)).pipe(operators_1.catchError(function (e) {\r\n    console.log(\"caught: \" + e);\r\n    return rxjs_1.of(10);\r\n}));\r\nsource.subscribe(function (v) { return console.log(\"value: \" + v); }, function (e) { return console.log(\"error: \" + e); }, function () { return console.log(\"complete\"); });\r\n// let output = document.getElementById(\"output\");\r\n// let button = document.getElementById(\"button\");\r\n// let click = fromEvent(button, \"click\");\r\n// function renderMovies(movies) {\r\n//     movies.forEach(movie => {\r\n//         let div = document.createElement(\"div\");\r\n//         div.innerText = movie.title;\r\n//         output.appendChild(div);\r\n//     });\r\n// }\r\n// //Although load is called, it is not returned to anyone until someone subscribes.\r\n// //load(\"movies.json\").subscribe(renderMovies);\r\n// loadWithFetch(\"movies.json\");\r\n// click.pipe(\r\n//     flatMap(e => loadWithFetch(\"movies.json\"))\r\n// ).subscribe(\r\n//     renderMovies,\r\n//     e => console.log(`error: ${e}`),\r\n//     () => console.log(\"complete\")\r\n// );\r\n\n\n//# sourceURL=webpack:///./main.ts?");
+eval("\r\nObject.defineProperty(exports, \"__esModule\", { value: true });\r\nvar rxjs_1 = __webpack_require__(/*! rxjs */ \"./node_modules/rxjs/_esm5/index.js\");\r\nvar loader_1 = __webpack_require__(/*! ./loader */ \"./loader.ts\");\r\nvar output = document.getElementById(\"output\");\r\nvar button = document.getElementById(\"button\");\r\nvar click = rxjs_1.fromEvent(button, \"click\");\r\nfunction renderMovies(movies) {\r\n    movies.forEach(function (movie) {\r\n        var div = document.createElement(\"div\");\r\n        div.innerText = movie.title;\r\n        output.appendChild(div);\r\n    });\r\n}\r\n//Although load is called, it is not returned to anyone until someone subscribes.\r\n//load(\"movies.json\").subscribe(renderMovies);\r\nloader_1.loadWithFetch(\"moviess.json\")\r\n    .subscribe(renderMovies, function (e) { return console.log(\"error: \" + e); }, function () { return console.log(\"complete\"); });\r\n// click.pipe(\r\n//     flatMap(e => loadWithFetch(\"movies.json\"))\r\n// ).subscribe(\r\n//     renderMovies,\r\n//     e => console.log(`error: ${e}`),\r\n//     () => console.log(\"complete\")\r\n// );\r\n\n\n//# sourceURL=webpack:///./main.ts?");
 
 /***/ }),
 
