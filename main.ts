@@ -1,4 +1,4 @@
-import { fromEvent, Observable } from "rxjs";
+import { fromEvent, Observable, from, defer } from "rxjs";
 import { delay, flatMap, scan, retryWhen, takeWhile } from "rxjs/operators";
 
 let output = document.getElementById("output");
@@ -27,6 +27,12 @@ function load(url: string) {
     );
 }
 
+function loadWithFetch(url: string) {
+    return defer(() => {
+        return from(fetch(url).then(r => r.json()));
+    });
+}
+
 function retryStrategy({ attempts = 4, delayMs = 500 }) {
     return function (errors) {
         return errors.pipe(
@@ -49,9 +55,10 @@ function renderMovies(movies) {
 
 //Although load is called, it is not returned to anyone until someone subscribes.
 //load("movies.json").subscribe(renderMovies);
+loadWithFetch("movies.json");
 
 click.pipe(
-    flatMap(e => load("movies.json"))
+    flatMap(e => loadWithFetch("movies.json"))
 ).subscribe(
     renderMovies,
     e => console.log(`error: ${e}`),
