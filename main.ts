@@ -1,6 +1,7 @@
-import { fromEvent, Observable, from, defer, of, merge, throwError, onErrorResumeNext } from "rxjs";
-import { delay, flatMap, scan, retryWhen, takeWhile, catchError } from "rxjs/operators";
-import { load, loadWithFetch } from "./loader";
+import { fromEvent } from "rxjs";
+import { flatMap, map } from "rxjs/operators";
+import { request } from "./http";
+import moviesApi from "./moviesAPI";
 
 let output = document.getElementById("output");
 let button = document.getElementById("button");
@@ -8,6 +9,7 @@ let button = document.getElementById("button");
 let click = fromEvent(button, "click");
 
 function renderMovies(movies) {
+    console.log("getting called to render now!");
     movies.forEach(movie => {
         let div = document.createElement("div");
         div.innerText = movie.title;
@@ -15,34 +17,20 @@ function renderMovies(movies) {
     });
 }
 
-//Although load is called, it is not returned to anyone until someone subscribes.
-//load("movies.json").subscribe(renderMovies);
-let subscription = load("testCancel.json")
-    .subscribe(
-        renderMovies,
-        e => console.log(`error: ${e}`),
-        () => console.log("complete")
-    );
-
-console.log(subscription);
-
-subscription.unsubscribe();
-
-load("movies.json").subscribe(
+moviesApi.getResponse.subscribe(
     renderMovies,
-    e => console.log(`ui error: ${e}`),
-    () => console.log("complete")
-);
-load("moviess.json").subscribe(
     e => console.log(e),
-    e => console.log(`ui error: ${e}`),
     () => console.log("complete")
 );
+moviesApi.get();
+moviesApi.get();
+moviesApi.get();
+moviesApi.get();
 
-click.pipe(
-    flatMap(e => load("games.json"))
-).subscribe(
-    renderMovies,
-    e => console.log(`error: ${e}`),
-    () => console.log("complete")
-);
+
+
+click.subscribe(() => {
+    moviesApi.get();
+    moviesApi.get();
+    moviesApi.get();
+});
