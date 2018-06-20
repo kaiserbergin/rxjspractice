@@ -1,5 +1,4 @@
-import { Observable, Subject, observable, AsyncSubject } from "rxjs";
-import { catchError, switchMap } from "rxjs/operators";
+import { Observable } from "rxjs";
 
 const responseTypeHandler = (responseType, xhr) => {
     switch (responseType) {

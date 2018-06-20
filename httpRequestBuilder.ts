@@ -1,4 +1,4 @@
-import { from, Subject } from "rxjs";
+import { from } from "rxjs";
 import { scan, delay, retryWhen } from "rxjs/operators";
 import { request } from "./http"
 
@@ -24,7 +24,8 @@ function retryRequest({ attempts = 0, delayMs = 500 } = {}) {
                 if (acc < attempts) {
                     return acc;
                 } else {
-                    throw new Error(`builder error: ${value.toString()}`);
+                    //Create custom error to throw
+                    throw new Error(`sample error: ${value.toString()}`);
                 }
             }, 0),
             delay(delayMs)

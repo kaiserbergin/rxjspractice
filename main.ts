@@ -1,6 +1,4 @@
 import { fromEvent } from "rxjs";
-import { flatMap, map } from "rxjs/operators";
-import { request } from "./http";
 import moviesApi from "./moviesAPI";
 
 let output = document.getElementById("output");
