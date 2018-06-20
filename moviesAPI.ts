@@ -11,7 +11,7 @@ class moviesAPI {
     }
 
     private getByIdRequest = new Subject();
-    getByIdResponse = this.getByIdRequest.pipe(mergeMap((id) => buildGet(`${baseUrl}${id}`)));
+    getByIdResponse = this.getByIdRequest.pipe(mergeMap((id) => buildGet(baseUrl/*`${baseUrl}${id}`*/)));
     getById(id: number) {
         this.getByIdRequest.next(id);
     }

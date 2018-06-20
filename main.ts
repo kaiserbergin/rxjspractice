@@ -1,4 +1,4 @@
-import { fromEvent } from "rxjs";
+import { fromEvent, BehaviorSubject } from "rxjs";
 import moviesApi from "./moviesAPI";
 
 let output = document.getElementById("output");
@@ -15,11 +15,20 @@ function renderMovies(movies) {
     });
 }
 
+moviesApi.bs.subscribe(
+    e => console.log("bs next with:", e),
+    e => console.log("bs failed with: ", e),
+    () => console.log('bs done')
+)
+
 moviesApi.getResponse.subscribe(
     renderMovies,
     e => console.log(e),
     () => console.log("complete")
 );
+moviesApi.get();
+moviesApi.get();
+moviesApi.get();
 moviesApi.get();
 
 click.subscribe(() => {
@@ -33,6 +42,8 @@ moviesApi.getByIdResponse.subscribe(
 );
 
 moviesApi.getById(11);
+moviesApi.getById(12);
+moviesApi.getById(13);
 
 moviesApi.simpleGet().subscribe(
     e => console.log("simpleGet with result of:", e),
@@ -68,5 +79,10 @@ moviesApi.simpleGetByIds([1, 2, 3]).subscribe(
     e => console.log("simpleGetByIds[1,2,3] with result of:", e),
     e => console.log("simpleGetById[1,2,3] failed with: ", e),
     () => console.log('simpleGetById[1,2,3] done')
+);
+moviesApi.simpleGetByIds([4, 2, 3]).subscribe(
+    e => console.log("simpleGetByIds[4,2,3] with result of:", e),
+    e => console.log("simpleGetById[4,2,3] failed with: ", e),
+    () => console.log('simpleGetById[4,2,3] done')
 );
 //moviesApi.getById(12);
