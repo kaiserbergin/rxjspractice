@@ -15,11 +15,6 @@ function renderMovies(movies) {
     });
 }
 
-moviesApi.bs.subscribe(
-    e => console.log("bs next with:", e),
-    e => console.log("bs failed with: ", e),
-    () => console.log('bs done')
-)
 
 moviesApi.getResponse.subscribe(
     renderMovies,
